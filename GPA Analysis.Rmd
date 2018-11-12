@@ -1,0 +1,65 @@
+---
+title: "GPA Analysis"
+author: "Joshua Lau"
+date: "Nov 11, 2018"
+output:
+  pdf_document: default
+  word_document: default
+---
+
+```{r}
+setwd("C:/ISyE3770")
+FindOutliers <- function(data) {
+  lowerq = quantile(data)[2]
+  upperq = quantile(data)[4]
+  iqr = upperq - lowerq
+  #identify extreme outliers
+  extreme.threshold.upper = (iqr * 1.5) + upperq
+  extreme.threshold.lower = lowerq - (iqr * 1.5)
+  result <- which(data > extreme.threshold.upper | data < extreme.threshold.lower)
+}
+
+mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+range <- function(x) {
+  max(x) - min(x)
+}
+
+MyData <- read.csv(file="C:/ISyE3770/IRPDataset.csv", header=TRUE, sep=",")
+
+data1 <- c(MyData$GPA)
+data2 <- c(MyData$Class.Size)
+temp <- FindOutliers(data1)
+print("Identifying outlier:")
+print(temp)
+print("Removing outlier:")
+newData <- data1[-temp]
+newData2 <- data2[-temp]
+print("normal probability plot and qqline:")
+qqnorm(newData)
+qqline(newData)
+print("Measures of central tendency:")
+print("mean:")
+mean(newData)
+print("median:")
+median(newData)
+print("mode:")
+mode(newData)
+print("Measures of variation:")
+print("var:")
+var(newData)
+print("standard deviation:")
+sd(newData)
+print("range:")
+range(newData)
+print("correlation:")
+cor.test(newData2, newData)
+plot(newData2, newData, main="Scatterplot of Class Size vs. GPA", 
+  	xlab="Class Size", ylab="GPA", pch=19)
+
+
+
+```
